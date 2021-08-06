@@ -1,0 +1,85 @@
+{
+    "$schema": "https://lnav.org/schemas/format-v1.schema.json",
+    "mail_log": {
+        "title": "Postfix log",
+        "description": "Postfix log",
+        "url": "http://perdu.com",
+        "multiline": false,
+        "regex": {
+            "postfix": {
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\]): ((?<level>[a-z]+): )?(?<queue_id>[A-F0-9]{10}): ((?<kv>(message-id=<(?<message_id>[^>]*)>|to=<(?<mail_to>[^>]*)>|orig_to=<(?<mail_orig_to>[^>]*)>|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*))(,\\s*\\g<kv>)*)?(?<body>\\b[^,].*)?"
+            },
+            "bogofilter": {
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\]): sender=<[^>]*>: X-Spam-Flag: \\w*, ((?<kv>(message-id=<(?<message_id>[^>]*)>|to=<(?<mail_to>[^>]*)>|queueID=<(?<queue_id>[A-F0-9]{10})>|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*))(,\\s*\\g<kv>)*)?(?<body>\\b[^,].*)?"
+            },
+            "zzfallback": {
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\]):\\s*((?<level>[a-z]+): )?\\s*(?<body>(?!([A-F0-9]{10}|sender=.*queueID))\\b[^,].*)?$"
+            }
+        },
+        "opid-field": "queue_id",
+        "value": {
+            "log_procname": {
+                "kind": "string",
+                "identifier": true,
+                "description": "The name of the process that generated the message"
+            },
+            "log_pid": {
+                "kind": "string",
+                "identifier": true,
+                "description": "The ID of the process that generated the message"
+            },
+            "queue_id": {
+                "kind": "string",
+                "identifier": true,
+                "description": "queue id"
+            },
+            "mail_from": {
+                "kind": "string",
+                "collate": "ipaddress",
+                "identifier": true,
+                "description": "from email adress"
+            },
+            "mail_to": {
+                "kind": "string",
+                "identifier": true,
+                "description": "to email address"
+            },
+            "mail_orig_to": {
+                "kind": "string",
+                "identifier": true,
+                "description": "original to email address"
+            },
+            "message_id": {
+                "kind": "string",
+                "identifier": true,
+                "description": "message-id header"
+            }
+        },
+        "sample": [
+            {
+                "line": "Aug  2 06:27:54 yuuai postfix-out/cleanup[16765]: A823D6B2DD: message-id=<20210802042754.A823D6B2DD@yuuai.polytechnique.org>",
+                "level": "info"
+            },
+            {
+                "line": "Aug  2 06:27:54 yuuai postfix/pickup[17414]: warning: C35666B1E2: message has been queued for 335 days",
+                "level": "warning"
+            },
+            {
+                "line": "Aug  2 06:27:54 yuuai postfix/local[14872]: A823D6B2DD: to=<root@hruid.polytechnique.org>, orig_to=<root>, relay=local, delay=0.21, delays=0.11/0/0/0.1, dsn=2.0.0, status=sent (forwarded as BE4306B44A)"
+            },
+            {
+                "line": "Aug  2 06:27:54 yuuai postfix/qmgr[5337]: CB8416B44C: from=<root@polytechnique.org>, size=946, nrcpt=3 (queue active)"
+            },
+            {
+                "line": "Aug  2 06:27:57 yuuai bogofilter[17446]: sender=<SRS0=someredacted@bounces.m4x.org>: X-Spam-Flag: No, spamicity=0.124658, queueID=7E4886B2DD, from=<local@domain.com>"
+            },
+            {
+                "line": "Aug  2 06:28:28 yuuai postfix/smtpd.local[16252]: connect from localhost[127.0.0.1]"
+            },
+            {
+                "line": "Aug  2 06:28:05 yuuai postfix/smtpd[7170]: warning: hostname doesnotexist does not resolve to address 109.234.22.34",
+                "level": "warning"
+            }
+        ]
+    }
+}
