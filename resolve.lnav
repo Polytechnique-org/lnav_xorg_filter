@@ -1,3 +1,6 @@
+# vim: ft=sql
+# @synopsis: resolve
+# @description: creates a table `resolved' resquired for |highlight-by-message-id
 ;create table resolved as select log_line, message_id, queue_id from mail_log
 ;update resolved set message_id = other.message_id from mail_log as other where resolved.message_id is null and other.message_id is not null and resolved.queue_id = other.queue_id
 

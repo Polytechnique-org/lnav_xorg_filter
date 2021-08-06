@@ -1,1 +1,4 @@
+# vim: ft=sql
+# @synopsis: highlight-by-message-id
+# @description: marks all messages where this message-id was processed. call |resolve before
 ;update mail_log set log_mark = resolved.message_id = (select message_id from resolved where log_line = log_top_line()) from resolved where resolved.log_line = mail_log.log_line
