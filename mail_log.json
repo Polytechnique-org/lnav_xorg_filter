@@ -7,13 +7,13 @@
         "multiline": false,
         "regex": {
             "postfix": {
-                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?: ((?<level>[a-z]+): )?(?<queue_id>[A-F0-9]{10}): ((message-id=<(?<message_id>[^>]*)>|to=<(?<mail_to>[^>]*)>|orig_to=<(?<mail_orig_to>[^>]*)>|size=(?<size>[0-9]+)|uid=[0-9]+ |nrcpt=(?<n_recipients>[0-9]+)|client=(?<client>[^, ]*)|relay=(?<relay>[^, ]*)|status=(?<status>[^, ]*)|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*)(,\\s*)?)*(?<body>\\b[^,].*)?$"
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?: ((?<level>[a-z]+): )?(?<queue_id>[A-F0-9]{7,15}): ((message-id=<(?<message_id>[^>]*)>|to=<(?<mail_to>[^>]*)>|orig_to=<(?<mail_orig_to>[^>]*)>|size=(?<size>[0-9]+)|uid=[0-9]+ |nrcpt=(?<n_recipients>[0-9]+)|client=(?<client>[^, ]*)|relay=(?<relay>[^, ]*)|status=(?<status>[^, ]*)|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*)(,\\s*)?)*(?<body>\\b[^,].*)?$"
             },
             "bogofilter": {
-                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?: sender=<[^>]*>: X-Spam-Flag: (?<spam_flag>[^, ]*), ((message-id=<(?<message_id>[^>]*)>|spamicity=(?<spamicity>[0-9.]*)|queueID=(?<queue_id>[A-F0-9]{10})|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*)(,\\s*)?)*(?<body>\\b[^,].*)?$"
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?: sender=<[^>]*>: X-Spam-Flag: (?<spam_flag>[^, ]*), ((message-id=<(?<message_id>[^>]*)>|spamicity=(?<spamicity>[0-9.]*)|queueID=(?<queue_id>[A-F0-9]{7,15})|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*)(,\\s*)?)*(?<body>\\b[^,].*)?$"
             },
             "fallback": {
-                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?:\\s*((?<level>[a-z]+): )?\\s*(?<body>(?!(([a-z]+: )?[A-F0-9]{10}|sender=.*queueID))\\b[^,].*)?$"
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?:\\s*((?<level>[a-z]+): )?\\s*(?<body>(?!(([a-z]+: )?[A-F0-9]{7,15}|sender=.*queueID))\\b[^,].*)?$"
             }
         },
         "opid-field": "queue_id",
@@ -125,7 +125,10 @@
             },
             {
                 "line": "Aug  2 06:28:09 yuuai postlicyd[1388]: request client=domain.example.com[1.2.3.4] from=<local@foo.bar.fr> to=<some.one@polytechnique.org> at RCPT: answer fail from filter pbl: \"DUNNO\""
-            }
+            },
+	    {
+		"line": "Aug  6 17:34:07 ozgurluk postfix-in/cleanup[25048]: A549C1E2C5E: message-id=<RAYM08J002BQH001001DL8IE019233270682@news.domain.fr>"
+	    }
         ]
     }
 }
