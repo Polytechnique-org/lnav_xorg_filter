@@ -7,13 +7,13 @@
         "multiline": false,
         "regex": {
             "postfix": {
-                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\]): ((?<level>[a-z]+): )?(?<queue_id>[A-F0-9]{10}): ((?<kv>(message-id=<(?<message_id>[^>]*)>|to=<(?<mail_to>[^>]*)>|orig_to=<(?<mail_orig_to>[^>]*)>|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*))(,\\s*\\g<kv>)*)?(?<body>\\b[^,].*)?"
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?: ((?<level>[a-z]+): )?(?<queue_id>[A-F0-9]{10}): ((message-id=<(?<message_id>[^>]*)>|to=<(?<mail_to>[^>]*)>|orig_to=<(?<mail_orig_to>[^>]*)>|size=(?<size>[0-9]+)|uid=[0-9]+ |nrcpt=(?<n_recipients>[0-9]+)|client=(?<client>[^, ]*)|relay=(?<relay>[^, ]*)|status=(?<status>[^, ]*)|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*)(,\\s*)?)*(?<body>\\b[^,].*)?$"
             },
             "bogofilter": {
-                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\]): sender=<[^>]*>: X-Spam-Flag: \\w*, ((?<kv>(message-id=<(?<message_id>[^>]*)>|to=<(?<mail_to>[^>]*)>|queueID=<(?<queue_id>[A-F0-9]{10})>|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*))(,\\s*\\g<kv>)*)?(?<body>\\b[^,].*)?"
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?: sender=<[^>]*>: X-Spam-Flag: (?<spam_flag>[^, ]*), ((message-id=<(?<message_id>[^>]*)>|spamicity=(?<spamicity>[0-9.]*)|queueID=(?<queue_id>[A-F0-9]{10})|from=<(?<mail_from>[^>]*)>|[a-zA-Z0-9-_]*=[^, ]*)(,\\s*)?)*(?<body>\\b[^,].*)?$"
             },
-            "zzfallback": {
-                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\]):\\s*((?<level>[a-z]+): )?\\s*(?<body>(?!([A-F0-9]{10}|sender=.*queueID))\\b[^,].*)?$"
+            "fallback": {
+                "pattern": "^(?<timestamp>(?:\\S{3,8}\\s+\\d{1,2} \\d{2}:\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z)) (?<log_hostname>[a-zA-Z0-9:][^ ]+[a-zA-Z0-9]) (?<log_procname>(?:[^\\[:]+|[^:]+))(?:\\[(?<log_pid>\\d+)\\])?:\\s*((?<level>[a-z]+): )?\\s*(?<body>(?!(([a-z]+: )?[A-F0-9]{10}|sender=.*queueID))\\b[^,].*)?$"
             }
         },
         "opid-field": "queue_id",
@@ -49,6 +49,41 @@
                 "identifier": true,
                 "description": "original to email address"
             },
+            "n_recipients": {
+                "kind": "integer",
+                "identifier": false,
+                "description": "number of n_recipients of the email"
+            },
+            "size": {
+                "kind": "integer",
+                "identifier": false,
+                "description": "size of the email"
+            },
+            "spamicity": {
+                "kind": "float",
+                "identifier": false,
+                "description": "spamicity according to bogo"
+            },
+            "spam_flag": {
+                "kind": "string",
+                "identifier": true,
+                "description": "spam flag attributed by bogo"
+            },
+            "client": {
+                "kind": "string",
+                "identifier": true,
+                "description": "client talking to us"
+            },
+            "relay": {
+                "kind": "string",
+                "identifier": true,
+                "description": "server we are submitting email to"
+            },
+            "status": {
+                "kind": "string",
+                "identifier": true,
+                "description": "status reported to client"
+            },
             "message_id": {
                 "kind": "string",
                 "identifier": true,
@@ -77,8 +112,14 @@
                 "line": "Aug  2 06:28:28 yuuai postfix/smtpd.local[16252]: connect from localhost[127.0.0.1]"
             },
             {
-                "line": "Aug  2 06:28:05 yuuai postfix/smtpd[7170]: warning: hostname doesnotexist does not resolve to address 109.234.22.34",
+                "line": "Aug  2 06:28:05 yuuai postfix/smtpd[7170]: warning: hostname doesnotexist does not resolve to address 109.123.123.123",
                 "level": "warning"
+            },
+            {
+                "line": "Aug  2 06:28:10 yuuai clamsmtpd: 13503FA: accepted connection from: 127.0.0.1"
+            },
+            {
+                "line": "Aug  2 06:28:09 yuuai postlicyd[1388]: request client=domain.example.com[1.2.3.4] from=<local@foo.bar.fr> to=<some.one@polytechnique.org> at RCPT: answer fail from filter pbl: \"DUNNO\""
             }
         ]
     }
