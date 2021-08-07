@@ -1,5 +1,5 @@
 # vim: ft=sql
 # @synopsis: info-for-message-id
 # @description: show all structured info collected for this message-id. call |resolve before
-;select mail_from, mail_to, mail_orig_to from mail_log join resolved on resolved.log_line = mail_log.log_line where resolved.message_id = (select message_id from resolved where log_line = log_top_line()) and (mail_from is not null or mail_to is not null or mail_orig_to is not null)
-:write-table-to -
+;select log_hostname, mail_from, mail_to, mail_orig_to, relay, status, spamicity, spam_flag, n_recipients, client from mail_log join resolved on resolved.log_line = mail_log.log_line where resolved.message_id = (select message_id from resolved where log_line = log_top_line()) and (mail_from is not null or mail_to is not null or mail_orig_to is not null or spamicity is not null or spam_flag is not null or n_recipients is not null or client is not null or relay is not null)
+:alt-msg press v to view results
